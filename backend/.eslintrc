@@ -6,5 +6,8 @@
     "plugins": [
       "@typescript-eslint"
     ],
-    "root": true
+    "root": true,
+    "rules": {
+      "@typescript-eslint/no-explicit-any": "off" // Enable the rule as an error
+    }
   }
