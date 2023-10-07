@@ -2,6 +2,7 @@ import { cardCollectionRoute } from "./cardCollection.route";
 import express from "express";
 import { userRoute } from "./user.route";
 import { cardRoute } from "./card.route";
+import { authRoute } from "./auth.route";
 
 export const router = express.Router();
 
@@ -17,6 +18,10 @@ const defaultRoutes = [
   {
     path: "/cards",
     route: cardRoute,
+  },
+  {
+    path: "/auth",
+    route: authRoute,
   },
 ];
 
