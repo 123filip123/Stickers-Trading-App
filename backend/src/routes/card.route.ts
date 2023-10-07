@@ -1,6 +1,11 @@
 import express from "express";
-import { generateCardsForCollection } from "../controllers/card.controller";
+import {
+  generateCardsForCollection,
+  getCards,
+} from "../controllers/card.controller";
 
 export const cardRoute = express.Router();
 
 cardRoute.post("/", generateCardsForCollection);
+
+cardRoute.get("/", getCards);

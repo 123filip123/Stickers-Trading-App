@@ -2,19 +2,15 @@ import mongoose, { Types } from "mongoose";
 
 const userCardSchema = new mongoose.Schema(
   {
-    collectionId: {
-      type: Types.ObjectId,
-      ref: "CardCollection",
-      required: true,
-    },
     userId: {
-      type: mongoose.Types.ObjectId,
-      ref: "User", // Replace with your user model name
+      type: Types.ObjectId,
+      ref: "User",
       required: true,
     },
-    cardNumber: {
-      type: Number,
-      reqired: true,
+    cardId: {
+      type: Types.ObjectId,
+      ref: "Card",
+      required: true,
     },
     duplicates: {
       type: Number,
@@ -27,9 +23,6 @@ const userCardSchema = new mongoose.Schema(
   }
 );
 
-userCardSchema.index(
-  { userId: 1, collectionId: 1, cardNumber: 1 },
-  { unique: true }
-);
+userCardSchema.index({ userId: 1, cardId: 1 }, { unique: true });
 
 export const UserCard = mongoose.model("UserCard", userCardSchema);

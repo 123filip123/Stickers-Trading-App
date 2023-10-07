@@ -21,5 +21,8 @@ export const validateToken = asyncHandler(async (req: any, res, next) => {
       res.status(401);
       throw new Error("User is not authorized or token is missing");
     }
+  } else {
+    res.status(402);
+    throw new Error("User is not authorized or token is missing");
   }
 });
