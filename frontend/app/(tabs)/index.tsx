@@ -3,31 +3,37 @@ import { Button, StyleSheet } from "react-native";
 import EditScreenInfo from "../../components/EditScreenInfo";
 import { Text, View } from "../../components/Themed";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Logs } from "expo";
+import { Card } from "tamagui";
+import { CardCollectionItem } from "../components/common/CardCollectionItem";
+import { ICardCollection } from "../models/CardCollection";
+import { axiosApi } from "../network/Auth/config/config";
+import { Endpoints } from "../network/endpoints";
+import { Link, Redirect } from "expo-router";
 
 export default function TabOneScreen() {
   Logs.enableExpoCliLogging();
-  const [some, setSome] = useState([]);
+  const [some, setSome] = useState<ICardCollection[]>([]);
+
+  useEffect(() => {
+    testFunction();
+  }, []);
 
   const testFunction = async () => {
-    console.log("start");
     try {
-      console.log("try");
-      const response = await axios.get(
-        "http://192.168.100.8:3000/api/card_collections"
-      );
-      console.log(response.data);
+      const api = await axiosApi();
+      const response = await api.get(Endpoints.getMyCollections);
       setSome(response.data);
     } catch (error) {
-      console.log(error);
     } finally {
-      console.log("finally");
     }
   };
 
+  return <Redirect href="/home" />;
+
   return (
-    <View style={styles.container}>
+    <View>
       <Text style={styles.title}>Tab One!!!!!!!</Text>
       <View
         style={styles.separator}
@@ -36,10 +42,14 @@ export default function TabOneScreen() {
       />
       <Button title="call" onPress={testFunction} />
       <Button title="reset state" onPress={() => setSome([])} />
-      {some.map((element: any) => (
-        <Text>{element.name}</Text>
+      {some.map((cardCollection: ICardCollection, i) => (
+        <CardCollectionItem
+          key={i}
+          imageSrc={cardCollection.image}
+          name={cardCollection.name}
+          id={cardCollection._id}
+        />
       ))}
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
     </View>
   );
 }
