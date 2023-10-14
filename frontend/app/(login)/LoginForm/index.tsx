@@ -2,14 +2,14 @@ import { Formik } from "formik";
 import React, { useState } from "react";
 import { View, Input, Button, Spinner, Text } from "tamagui";
 import * as SecureStore from "expo-secure-store";
-import { axiosApi } from "../../../../network/Auth/config/config";
-import { Endpoints } from "../../../../network/endpoints";
 import { StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { BORDER_RADIUS, IError, colors } from "../../../../globalConstants";
 import * as yup from "yup";
 import { Logs } from "expo";
 import Toast from "react-native-toast-message";
+import { axiosApi } from "../../network/Auth/config/config";
+import { Endpoints } from "../../network/endpoints";
+import { BORDER_RADIUS, colors } from "../../globalConstants";
 
 interface IFormValues {
   email: string;

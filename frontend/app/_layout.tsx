@@ -10,7 +10,7 @@ import { useColorScheme } from "react-native";
 import { TamaguiProvider } from "tamagui";
 import tamaguiConfig from "../tamagui.config";
 import Toast from "react-native-toast-message";
-import { useAuth } from "./AuthProvider";
+import { AuthProvider, useAuth } from "./AuthProvider";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -31,8 +31,6 @@ export default function RootLayout() {
     InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf"),
   });
 
-  // const { state } = useAuth();
-
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
@@ -48,20 +46,29 @@ export default function RootLayout() {
     return null;
   }
   return (
-    <TamaguiProvider config={tamaguiConfig}>
-      <RootLayoutNav />
-      <Toast />
-    </TamaguiProvider>
+    <AuthProvider>
+      <TamaguiProvider config={tamaguiConfig}>
+        <RootLayoutNav />
+        <Toast />
+      </TamaguiProvider>
+    </AuthProvider>
   );
 }
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const { state } = useAuth();
+
+  console.log(state);
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack screenOptions={{ headerShown: false }}>
+        {state.isLogged ? (
+          <Stack.Screen name="(login)" options={{ headerShown: false }} />
+        ) : (
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        )}
       </Stack>
     </ThemeProvider>
   );

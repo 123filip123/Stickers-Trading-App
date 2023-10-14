@@ -26,7 +26,6 @@ export const SubmitButton = ({
 }: ISubmitButtonProps) => {
   Logs.enableExpoCliLogging();
   const styles = generateStylesstyles(isDisabled);
-  console.log(isDisabled);
   return (
     <TouchableOpacity style={styles.saveButton} onPress={onPress}>
       {isLoading ? (

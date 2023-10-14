@@ -21,7 +21,6 @@ export const NumberInputFieldButton = ({
   Logs.enableExpoCliLogging();
 
   const specialCharacter = side === "left" ? "-" : "+";
-  console.log(disabled);
   const isDisabled = disabled || (side === "left" && value === "0");
   const styles = generateStyles(side, isDisabled);
 
