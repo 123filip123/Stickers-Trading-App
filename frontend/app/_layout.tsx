@@ -1,16 +1,22 @@
 import {
   DarkTheme,
   DefaultTheme,
+  NavigationContainer,
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { SplashScreen, Stack } from "expo-router";
-import { useEffect } from "react";
+import { SplashScreen } from "expo-router";
+import React, { useEffect } from "react";
 import { useColorScheme } from "react-native";
 import { TamaguiProvider } from "tamagui";
 import tamaguiConfig from "../tamagui.config";
 import Toast from "react-native-toast-message";
 import { AuthProvider, useAuth } from "./AuthProvider";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Login from "./(login)";
+import { CollectionsScreen } from "./screens/CollectionsScreen";
+import { ViewCollection } from "./screens/ViewCollection";
+import LogoSplashScreen from "./screens/SplashScreen";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -54,6 +60,7 @@ export default function RootLayout() {
     </AuthProvider>
   );
 }
+const Stack = createNativeStackNavigator();
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
@@ -63,13 +70,27 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack screenOptions={{ headerShown: false }}>
-        {state.isLogged ? (
-          <Stack.Screen name="(login)" options={{ headerShown: false }} />
-        ) : (
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        )}
-      </Stack>
+      <NavigationContainer independent={true}>
+        <Stack.Navigator>
+          {state.isLoading ? (
+            <Stack.Screen
+              name="SplashScreen"
+              component={LogoSplashScreen}
+              options={{ headerShown: false }}
+            />
+          ) : !state.isAuthenticated ? (
+            <Stack.Screen name="Login" component={Login} />
+          ) : (
+            <>
+              <Stack.Screen
+                name="MyCollections"
+                component={CollectionsScreen}
+              />
+              <Stack.Screen name="ViewCollection" component={ViewCollection} />
+            </>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
     </ThemeProvider>
   );
 }

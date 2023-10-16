@@ -2,6 +2,7 @@ import { Text, View } from "tamagui";
 import { Logs } from "expo";
 import {
   ActivityIndicator,
+  ColorValue,
   DimensionValue,
   GestureResponderEvent,
   StyleSheet,
@@ -15,6 +16,7 @@ interface ISubmitButtonProps {
   isDisabled?: boolean;
   isLoading?: boolean;
   width?: DimensionValue;
+  color?: ColorValue;
 }
 
 export const SubmitButton = ({
@@ -22,10 +24,11 @@ export const SubmitButton = ({
   isDisabled,
   isLoading,
   onPress,
+  color,
   width,
 }: ISubmitButtonProps) => {
   Logs.enableExpoCliLogging();
-  const styles = generateStylesstyles(isDisabled);
+  const styles = generateStylesstyles(isDisabled, color);
   return (
     <TouchableOpacity style={styles.saveButton} onPress={onPress}>
       {isLoading ? (
@@ -39,12 +42,16 @@ export const SubmitButton = ({
   );
 };
 
-const generateStylesstyles = (isDisabled?: boolean, width?: DimensionValue) =>
+const generateStylesstyles = (
+  isDisabled?: boolean,
+  color?: ColorValue,
+  width?: DimensionValue
+) =>
   StyleSheet.create({
     saveButton: {
       borderRadius: BORDER_RADIUS,
-      backgroundColor: colors.blue,
-      opacity: isDisabled ? 1 : 0.2,
+      backgroundColor: color ?? colors.blue,
+      opacity: isDisabled ? 0.2 : 1,
       height: 50,
       width: width ?? 100,
       justifyContent: "center",

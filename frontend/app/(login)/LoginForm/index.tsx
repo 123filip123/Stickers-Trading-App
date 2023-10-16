@@ -10,6 +10,7 @@ import Toast from "react-native-toast-message";
 import { axiosApi } from "../../network/Auth/config/config";
 import { Endpoints } from "../../network/endpoints";
 import { BORDER_RADIUS, colors } from "../../globalConstants";
+import { useAuth } from "../../AuthProvider";
 
 interface IFormValues {
   email: string;
@@ -33,6 +34,9 @@ export const LoginForm = () => {
   Logs.enableExpoCliLogging();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { dispatch } = useAuth(); // Access the authentication state using useAuth
+
+  console.log("ozbilno tuka?");
 
   const login = async (values: IFormValues) => {
     setIsSubmitting(true);
@@ -41,6 +45,10 @@ export const LoginForm = () => {
       const response: any = await api.post(Endpoints.login, values);
       const accessToken = response.data.accessToken;
       await SecureStore.setItemAsync("BearerToken", accessToken);
+
+      // Authenticate the user by dispatching the "LOGIN" action
+      console.log("in");
+      dispatch({ type: "LOGIN" });
       Toast.show({
         type: "success",
         text1: "Success",

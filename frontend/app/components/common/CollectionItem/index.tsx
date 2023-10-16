@@ -1,33 +1,24 @@
 import { Text, View, Image } from "tamagui";
+import { Logs } from "expo";
 import { Pressable, StyleSheet } from "react-native";
 import { BORDER_RADIUS, colors } from "../../../globalConstants";
-import { Link } from "expo-router";
 
-export interface ICardCollectionItem {
+interface ICollectionItemProps {
   imageSrc: string;
   name: string;
   id: string;
   onPress: () => void;
 }
 
-export const CardCollectionItem = ({
+export const CollectionItem = ({
   imageSrc,
   name,
   id,
   onPress,
-}: ICardCollectionItem) => {
+}: ICollectionItemProps) => {
+  Logs.enableExpoCliLogging();
+
   return (
-    // <Link href={`/${id}`} asChild>
-    //   <View width="100%" marginBottom={10}>
-    //     <View style={styles.container}>
-    //       <Image
-    //         source={{ width: 80, height: 80, uri: imageSrc }}
-    //         style={styles.image}
-    //       />
-    //       <Text style={styles.name}>{name}</Text>
-    //     </View>
-    //   </View>
-    // </Link>
     <Pressable onPress={onPress}>
       <View width="100%" marginBottom={10}>
         <View style={styles.container}>

@@ -25,7 +25,6 @@ export const CardModal = ({
   isVisible,
   card,
   closeModal,
-  collectionName,
   addCard,
 }: ICardModalProps) => {
   Logs.enableExpoCliLogging();
@@ -154,7 +153,7 @@ export const CardModal = ({
                 text="SAVE"
                 onPress={handleSavePress}
                 isLoading={isSaving}
-                isDisabled={isFormChanged}
+                isDisabled={!isFormChanged}
               />
             </View>
           </View>

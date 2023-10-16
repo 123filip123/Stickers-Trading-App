@@ -1,28 +1,68 @@
 import { Tabs, Text, View } from "tamagui";
-import { LoginForm } from "./LoginForm";
-import { StyleSheet } from "react-native";
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { BORDER_RADIUS } from "../globalConstants";
+import { LoginForm } from "../components/pages/Login/LoginForm";
+import { Logs } from "expo";
+import { SignupForm } from "./SignupForm";
+import { useState } from "react";
 
-const login = () => {
+const Login = () => {
+  Logs.enableExpoCliLogging();
+  console.log(3);
+  const [selectedTab, setSelectedTab] = useState<"login" | "sign-up">("login");
+
   return (
-    <View style={styles.container}>
-      <Tabs defaultValue="login" flexDirection="column" width="100%">
-        <Tabs.List width="100%">
-          <Tabs.Tab value="login" style={styles.singleTab}>
-            <Text>Login</Text>
-          </Tabs.Tab>
-          <Tabs.Tab value="sign-up" style={styles.singleTab}>
-            <Text>Sign-up</Text>
-          </Tabs.Tab>
-        </Tabs.List>
-        <Tabs.Content value="login">
-          <LoginForm />
-        </Tabs.Content>
-      </Tabs>
-    </View>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={{ flex: 1 }}
+        enabled
+      >
+        <View style={styles.container}>
+          <Tabs value={selectedTab} flexDirection="column" width="100%">
+            <Tabs.List width="100%">
+              <Tabs.Tab
+                value="login"
+                style={styles.singleTab}
+                onPress={() => {
+                  setSelectedTab("login");
+                }}
+              >
+                <Text>Login</Text>
+              </Tabs.Tab>
+              <Tabs.Tab
+                value="sign-up"
+                style={styles.singleTab}
+                onPress={() => {
+                  setSelectedTab("sign-up");
+                }}
+              >
+                <Text>Sign-up</Text>
+              </Tabs.Tab>
+            </Tabs.List>
+            <Tabs.Content value="login">
+              <LoginForm />
+            </Tabs.Content>
+            <Tabs.Content value="sign-up">
+              <SignupForm
+                redirectToLogin={() => {
+                  setSelectedTab("login");
+                }}
+              />
+            </Tabs.Content>
+          </Tabs>
+        </View>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 };
-export default login;
+export default Login;
 
 export const styles = StyleSheet.create({
   container: {

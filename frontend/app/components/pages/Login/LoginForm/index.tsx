@@ -10,6 +10,7 @@ import { BORDER_RADIUS, IError, colors } from "../../../../globalConstants";
 import * as yup from "yup";
 import { Logs } from "expo";
 import Toast from "react-native-toast-message";
+import { useAuth } from "../../../../AuthProvider";
 
 interface IFormValues {
   email: string;
@@ -33,7 +34,8 @@ export const LoginForm = () => {
   Logs.enableExpoCliLogging();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const { dispatch } = useAuth();
+  console.log("2");
   const login = async (values: IFormValues) => {
     setIsSubmitting(true);
     try {
@@ -41,6 +43,9 @@ export const LoginForm = () => {
       const response: any = await api.post(Endpoints.login, values);
       const accessToken = response.data.accessToken;
       await SecureStore.setItemAsync("BearerToken", accessToken);
+
+      console.log("HERE HERE HRE");
+      dispatch({ type: "LOGIN" });
       Toast.show({
         type: "success",
         text1: "Success",

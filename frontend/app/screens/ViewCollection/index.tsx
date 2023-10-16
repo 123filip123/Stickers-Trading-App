@@ -1,58 +1,35 @@
-import { Stack, useSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
-import { Input, ScrollView, View } from "tamagui";
-import { axiosApi } from "../../network/Auth/config/config";
-import { Endpoints } from "../../network/endpoints";
-import { ICard } from "../../models/Card";
-import { CardComponent } from "../../components/common/CardComponent";
+import { Input, ScrollView, Text, View } from "tamagui";
+import { Logs } from "expo";
 import { ActivityIndicator, StyleSheet } from "react-native";
-import { CardsToggleGroupFilter } from "../../components/common/CardsToggleGroupFilter";
 import { BORDER_RADIUS, colors } from "../../globalConstants";
+import { ICard } from "../../models/Card";
+import {
+  CARDS_TOGGLE_FILTER,
+  CardsToggleGroupFilter,
+} from "../../components/common/CardsToggleGroupFilter";
+import { CardComponent } from "../../components/common/CardComponent";
+import { useViewCollection } from "./useViewCollection";
+import { SubmitButton } from "../../components/common/SubmitButton";
+import * as SecureStore from "expo-secure-store";
+import { useAuth } from "../../AuthProvider";
 
-enum CARDS_TOGGLE_FILTER {
-  ALL = "All",
-  OWNED = "Owned",
-  MISSING = "Missing",
+interface IViewCollectionProps {
+  route: any;
 }
 
-const CollectionPreview = () => {
-  const { id } = useSearchParams();
-  const [cards, setCards] = useState<ICard[]>([]);
-  const [collectionName, setCollectionName] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
-  const [cardsToggleFilter, setCardToggleFilter] =
-    useState<CARDS_TOGGLE_FILTER>(CARDS_TOGGLE_FILTER.ALL);
-  useEffect(() => {
-    getMyCollectionCards();
-  }, []);
+export const ViewCollection = ({ route }: IViewCollectionProps) => {
+  Logs.enableExpoCliLogging();
+  const { dispatch } = useAuth(); // Access the authentication state using useAuth
 
-  const getMyCollectionCards = async () => {
-    setIsLoading(true);
-    try {
-      const api = await axiosApi();
-      const response = await api.get(
-        Endpoints.getMyCollectionCards(id as string)
-      );
-      setCards(response.data);
-    } catch (error) {
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Function for adding a new card from the modal
-  const addCard = (newCard: ICard) => {
-    const updatedCards = cards.map((card) => {
-      if (card.id === newCard.id) {
-        // Replace the existing card with the new card
-        return newCard;
-      }
-      // Keep the card as-is
-      return card;
-    });
-    setCards(updatedCards);
-  };
+  const [
+    cards,
+    isLoading,
+    searchValue,
+    setSearchValue,
+    cardsToggleFilter,
+    setCardToggleFilter,
+    addCard,
+  ] = useViewCollection(route.params.collectionId);
 
   if (isLoading) {
     return (
@@ -69,8 +46,10 @@ const CollectionPreview = () => {
       </View>
     );
   }
-
+  console.log(cards);
   const shouldRenderCard = (card: ICard) => {
+    console.log(card);
+    console.log("hm?");
     switch (cardsToggleFilter) {
       case CARDS_TOGGLE_FILTER.OWNED: {
         if (!!card.owned_id) {
@@ -97,9 +76,19 @@ const CollectionPreview = () => {
   const setToggleGroupValue = (value: CARDS_TOGGLE_FILTER) => {
     setCardToggleFilter(value);
   };
+  const handleLogout = async () => {
+    try {
+      await SecureStore.deleteItemAsync("BearerToken");
+      dispatch({ type: "LOGOUT" });
+      console.log("Access token removed");
+    } catch (error) {
+      console.error("Error removing access token:", error);
+    }
+  };
 
   return (
     <View backgroundColor="white" borderRadius={BORDER_RADIUS} padding={5}>
+      <SubmitButton text="Log out" color={colors.red} onPress={handleLogout} />
       <View width="100%" justifyContent="center" alignItems="center" margin={5}>
         <CardsToggleGroupFilter
           value={cardsToggleFilter}
@@ -113,8 +102,10 @@ const CollectionPreview = () => {
           onChangeText={setSearchValue}
         />
       </View>
-      <ScrollView borderRadius={BORDER_RADIUS}>
-        <Stack.Screen options={{ headerTitle: `${collectionName}` }} />
+      <ScrollView
+        borderRadius={BORDER_RADIUS}
+        contentContainerStyle={{ paddingBottom: 150 }}
+      >
         <View style={styles.gridContainer}>
           {cards.map((card) => {
             if (shouldRenderCard(card)) {
@@ -122,7 +113,7 @@ const CollectionPreview = () => {
                 <CardComponent
                   key={card.card_number}
                   card={card}
-                  collectionName={collectionName}
+                  collectionName={route.params.collectionName}
                   addCard={addCard}
                 />
               );
@@ -133,7 +124,6 @@ const CollectionPreview = () => {
     </View>
   );
 };
-export default CollectionPreview;
 
 const styles = StyleSheet.create({
   gridContainer: {

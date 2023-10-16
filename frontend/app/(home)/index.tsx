@@ -1,16 +1,15 @@
 import { Logs } from "expo";
 import { useEffect, useState } from "react";
 import { View } from "tamagui";
-import { ICardCollection } from "../../models/CardCollection";
-import { Endpoints } from "../../network/endpoints";
-import { axiosApi } from "../../network/Auth/config/config";
-import { CardCollectionItem } from "../../components/common/CardCollectionItem";
-import { BORDER_RADIUS } from "../../globalConstants";
+import { ICardCollection } from "../models/CardCollection";
+import { axiosApi } from "../network/Auth/config/config";
+import { Endpoints } from "../network/endpoints";
+import { BORDER_RADIUS } from "../globalConstants";
+import { CardCollectionItem } from "../components/common/CardCollectionItem";
 
-const list = () => {
+const MyCollections = ({}) => {
   Logs.enableExpoCliLogging();
   const [collections, setCollections] = useState<ICardCollection[]>([]);
-
   useEffect(() => {
     getMyCollections();
   }, []);
@@ -24,6 +23,9 @@ const list = () => {
     } finally {
     }
   };
+
+  const pressHandler = () => {};
+
   return (
     <View
       backgroundColor="white"
@@ -37,9 +39,10 @@ const list = () => {
           name={cardCollection.name}
           id={cardCollection._id}
           key={i}
+          onPress={pressHandler}
         />
       ))}
     </View>
   );
 };
-export default list;
+export default MyCollections;
