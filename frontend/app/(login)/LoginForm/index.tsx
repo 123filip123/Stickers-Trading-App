@@ -2,15 +2,15 @@ import { Formik } from "formik";
 import React, { useState } from "react";
 import { View, Input, Button, Spinner, Text } from "tamagui";
 import * as SecureStore from "expo-secure-store";
-import { axiosApi } from "../../../../network/Auth/config/config";
-import { Endpoints } from "../../../../network/endpoints";
 import { StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { BORDER_RADIUS, IError, colors } from "../../../../globalConstants";
 import * as yup from "yup";
 import { Logs } from "expo";
 import Toast from "react-native-toast-message";
-import { useAuth } from "../../../../AuthProvider";
+import { axiosApi } from "../../network/Auth/config/config";
+import { Endpoints } from "../../network/endpoints";
+import { BORDER_RADIUS, colors } from "../../globalConstants";
+import { useAuth } from "../../AuthProvider";
 
 interface IFormValues {
   email: string;
@@ -34,8 +34,10 @@ export const LoginForm = () => {
   Logs.enableExpoCliLogging();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { dispatch } = useAuth();
-  console.log("2");
+  const { dispatch } = useAuth(); // Access the authentication state using useAuth
+
+  console.log("ozbilno tuka?");
+
   const login = async (values: IFormValues) => {
     setIsSubmitting(true);
     try {
@@ -44,7 +46,8 @@ export const LoginForm = () => {
       const accessToken = response.data.accessToken;
       await SecureStore.setItemAsync("BearerToken", accessToken);
 
-      console.log("HERE HERE HRE");
+      // Authenticate the user by dispatching the "LOGIN" action
+      console.log("in");
       dispatch({ type: "LOGIN" });
       Toast.show({
         type: "success",

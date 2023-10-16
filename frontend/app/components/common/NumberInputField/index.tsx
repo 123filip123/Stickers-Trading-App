@@ -25,15 +25,12 @@ export const NumberInputField = ({
   Logs.enableExpoCliLogging();
 
   const [inputValue, setInputValue] = useState(value);
-  console.log("++++", inputValue);
   const handleInputChange = (text: string) => {
     // Remove any leading zeros
-    console.log("big mistake");
     text = text.replace(/^0+/, "");
 
     // Remove any non-numeric characters
     text = text.replace(/[^0-9]/g, "");
-    console.log("mistake", text);
     setInputValue(text);
   };
 
