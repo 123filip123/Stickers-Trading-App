@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  downloadCardCollection,
   getMyCardCollection,
   getMyCardCollectionCards,
   getMyCardCollectionMissingCards,
@@ -23,4 +24,10 @@ myCardCollectionRoute.get(
   "/:id/missing_cards",
   validateToken,
   getMyCardCollectionMissingCards
+);
+
+myCardCollectionRoute.get(
+  "/:id/download",
+  validateToken,
+  downloadCardCollection
 );

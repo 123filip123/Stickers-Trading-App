@@ -9,6 +9,7 @@ import { User } from "../models/user.model";
 //@access public
 export const registerUser = expressAsyncHandler(async (req, res) => {
   const { email, password, first_name, last_name, nickname } = req.body;
+  console.log({ email, password, first_name, last_name, nickname });
   if (!email || !password || !first_name || !last_name || !nickname) {
     res.status(400);
     throw new Error("All fields are mandatory!");
@@ -68,7 +69,7 @@ export const loginUser = expressAsyncHandler(async (req, res) => {
     res.status(200).json({ accessToken });
   } else {
     res.status(401);
-    throw new Error("email or password is not valid");
+    throw new Error("Email or password is not valid");
   }
 });
 

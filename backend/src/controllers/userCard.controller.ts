@@ -1,6 +1,6 @@
 import expressAsyncHandler from "express-async-handler";
 import { UserCard } from "../models/userCard.model";
-import { Card } from "../models/card.model";
+import { Card, ICard } from "../models/card.model";
 
 export const addUserCard = expressAsyncHandler(async (req: any, res: any) => {
   try {
@@ -27,8 +27,17 @@ export const addUserCard = expressAsyncHandler(async (req: any, res: any) => {
     });
 
     const response = await UserCard.create(newUserCard);
-
-    return res.status(201).json(response);
+    const newCard = {
+      id: response.cardId,
+      user_id: response.userId,
+      owned_id: response._id,
+      duplicates: response.duplicates,
+      card_number: card.cardNumber,
+      collection_id: card.collectionId,
+    };
+    // return res.status(201).json(response);
+    console.log(newCard);
+    return res.status(201).json(newCard);
   } catch (error: any) {
     res.status(500);
     throw new Error(error.message);
@@ -96,7 +105,22 @@ export const changeUserCardDuplicates = expressAsyncHandler(
         throw new Error(`Cannot find any card with ID ${id}`);
       }
       const updatedCard = await UserCard.findById(id);
-      res.status(200).json(updatedCard);
+      const cardInCollection = await Card.findOne({ _id: updatedCard?.cardId });
+
+      if (!cardInCollection) {
+        res.status(500);
+        throw new Error("Can't find card.");
+      }
+
+      const newCard = {
+        id: updatedCard!.cardId,
+        user_id: updatedCard!.userId,
+        owned_id: updatedCard!._id,
+        duplicates: updatedCard!.duplicates,
+        card_number: cardInCollection.cardNumber,
+        collection_id: cardInCollection.collectionId,
+      };
+      res.status(200).json(newCard);
     } catch (error: any) {
       res.status(500);
       throw new Error(error.message);
@@ -119,7 +143,20 @@ export const deleteUserCard = expressAsyncHandler(
         res.status(404);
         throw new Error(`Cannot find any card with ID ${id}`);
       }
-      res.status(200).json(card);
+
+      // Return the card from collection
+      const cardInCollection = await Card.findOne({ _id: card.cardId });
+      if (!cardInCollection) {
+        res.status(404);
+        throw new Error(`Cannot find any card with ID ${id}`);
+      }
+      const responseCard: ICard = {
+        id: String(cardInCollection._id),
+        collection_id: String(cardInCollection.collectionId),
+        card_number: cardInCollection.cardNumber!,
+        duplicates: 0,
+      };
+      res.status(200).json(responseCard);
     } catch (error: any) {
       res.status(500);
       throw new Error(error.message);
