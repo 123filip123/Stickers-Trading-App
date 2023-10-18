@@ -85,6 +85,7 @@ function RootLayoutNav() {
               <Stack.Screen
                 name="MyCollections"
                 component={CollectionsScreen}
+                options={{ title: "My Collections" }}
               />
               <Stack.Screen name="ViewCollection" component={ViewCollection} />
             </>

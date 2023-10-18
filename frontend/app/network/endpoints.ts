@@ -9,6 +9,8 @@ export const Endpoints = {
   getMyCollectionCards: (id: string) => `/my_card_collections/${id}/cards`,
   getMyCollectionMissingCards: (id: string) =>
     `/my_card_collections/${id}/missing_cards`,
+  downloadMyCollectionCardsTxt: (id: string) =>
+    `/my_card_collections/${id}/download`,
 
   // Collections
   getCollection: (id: string) => `/card_collections/${id}`,

@@ -1,4 +1,4 @@
-import { Input, ScrollView, Text, View } from "tamagui";
+import { Input, ScrollView, View } from "tamagui";
 import { Logs } from "expo";
 import { ActivityIndicator, StyleSheet } from "react-native";
 import { BORDER_RADIUS, colors } from "../../globalConstants";
@@ -12,14 +12,27 @@ import { useViewCollection } from "./useViewCollection";
 import { SubmitButton } from "../../components/common/SubmitButton";
 import * as SecureStore from "expo-secure-store";
 import { useAuth } from "../../AuthProvider";
+import { DownloadCardsIcon } from "../../components/common/DownloadCardsIcon";
 
 interface IViewCollectionProps {
   route: any;
+  navigation: any;
 }
 
-export const ViewCollection = ({ route }: IViewCollectionProps) => {
+export const ViewCollection = ({ route, navigation }: IViewCollectionProps) => {
   Logs.enableExpoCliLogging();
   const { dispatch } = useAuth(); // Access the authentication state using useAuth
+  const { collectionName, collectionId, numberOfCards } = route.params;
+
+  navigation.setOptions({
+    title: collectionName,
+    headerRight: () => (
+      <DownloadCardsIcon
+        collectionId={collectionId as string}
+        collectionName={collectionName as string}
+      />
+    ),
+  });
 
   const [
     cards,
@@ -29,7 +42,7 @@ export const ViewCollection = ({ route }: IViewCollectionProps) => {
     cardsToggleFilter,
     setCardToggleFilter,
     addCard,
-  ] = useViewCollection(route.params.collectionId);
+  ] = useViewCollection(collectionId);
 
   if (isLoading) {
     return (
@@ -46,10 +59,7 @@ export const ViewCollection = ({ route }: IViewCollectionProps) => {
       </View>
     );
   }
-  console.log(cards);
   const shouldRenderCard = (card: ICard) => {
-    console.log(card);
-    console.log("hm?");
     switch (cardsToggleFilter) {
       case CARDS_TOGGLE_FILTER.OWNED: {
         if (!!card.owned_id) {
@@ -60,6 +70,13 @@ export const ViewCollection = ({ route }: IViewCollectionProps) => {
       }
       case CARDS_TOGGLE_FILTER.MISSING: {
         if (!card.owned_id) {
+          return (
+            searchValue === "" || String(card.card_number).includes(searchValue)
+          );
+        } else return false;
+      }
+      case CARDS_TOGGLE_FILTER.DUPLICATES: {
+        if (card.duplicates > 0) {
           return (
             searchValue === "" || String(card.card_number).includes(searchValue)
           );

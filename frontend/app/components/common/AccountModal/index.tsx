@@ -1,10 +1,9 @@
 import { Button, Text, View } from "tamagui";
 import { Logs } from "expo";
-import { Modal, Platform, StyleSheet } from "react-native";
+import { Modal, Platform, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { BORDER_RADIUS, colors } from "../../../globalConstants";
 import { useState } from "react";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { SubmitButton } from "../SubmitButton";
 import { useAuth } from "../../../AuthProvider";
 import * as SecureStore from "expo-secure-store";

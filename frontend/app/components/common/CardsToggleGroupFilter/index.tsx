@@ -1,13 +1,13 @@
 import { Text, View } from "tamagui";
 import { Logs } from "expo";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { BORDER_RADIUS, colors } from "../../../globalConstants";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 export enum CARDS_TOGGLE_FILTER {
   ALL = "All",
   OWNED = "Owned",
   MISSING = "Missing",
+  DUPLICATES = "Duplicates",
 }
 
 interface ICardsToggleGroupFilterProps {
@@ -63,10 +63,26 @@ export const CardsToggleGroupFilter = ({
           backgroundColor={
             value === CARDS_TOGGLE_FILTER.MISSING ? colors.gray : colors.white
           }
+        >
+          <Text>{CARDS_TOGGLE_FILTER.MISSING}</Text>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          setValue(CARDS_TOGGLE_FILTER.DUPLICATES);
+        }}
+      >
+        <View
+          style={styles.groupItem}
+          backgroundColor={
+            value === CARDS_TOGGLE_FILTER.DUPLICATES
+              ? colors.gray
+              : colors.white
+          }
           borderTopRightRadius={BORDER_RADIUS}
           borderBottomRightRadius={BORDER_RADIUS}
         >
-          <Text>{CARDS_TOGGLE_FILTER.MISSING}</Text>
+          <Text>{CARDS_TOGGLE_FILTER.DUPLICATES}</Text>
         </View>
       </TouchableOpacity>
     </View>
@@ -79,11 +95,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     flexDirection: "row",
     width: 300,
+    alignItems: "center",
+    justifyContent: "center",
   },
   groupItem: {
     alignItems: "center",
     justifyContent: "center",
-    width: 100,
+    width: 80,
     height: 35,
     borderColor: colors.gray,
     borderWidth: 1,

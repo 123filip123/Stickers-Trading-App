@@ -17,16 +17,13 @@ export const useViewCollection = (id: string): TUseViewCollectionReturn => {
 
   const getMyCollectionCards = async () => {
     setIsLoading(true);
-    console.log("inside");
     try {
       const api = await axiosApi();
       const response = await api.get(
         Endpoints.getMyCollectionCards(id as string)
       );
-      console.log("***", response.data);
       setCards(response.data);
     } catch (error: any) {
-      console.log("yoooo");
       Toast.show({
         type: "error",
         text1: "Error",
@@ -38,7 +35,6 @@ export const useViewCollection = (id: string): TUseViewCollectionReturn => {
   };
 
   useEffect(() => {
-    console.log("bruh");
     getMyCollectionCards();
   }, []);
 

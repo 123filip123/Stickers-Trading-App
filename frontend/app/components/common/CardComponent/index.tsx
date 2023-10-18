@@ -1,9 +1,8 @@
 import { Card, Text, View } from "tamagui";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { ICard, INotOwnedCard } from "../../../models/Card";
 import { CardModal } from "../CardModal";
 import { useState } from "react";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { Logs } from "expo";
 import { BORDER_RADIUS, colors } from "../../../globalConstants";
 
@@ -25,6 +24,7 @@ export const CardComponent = ({
   const styles = generateStyles(isCardOwned);
 
   const handlePress = () => {
+    console.log("aaaa");
     setIsModalOpen(true);
   };
 

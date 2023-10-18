@@ -34,7 +34,7 @@ export const SubmitButton = ({
       {isLoading ? (
         <ActivityIndicator color="white" />
       ) : (
-        <Text fontSize="$7" fontWeight="bold" letterSpacing={2}>
+        <Text fontSize="$7" fontWeight="bold">
           {text}
         </Text>
       )}
