@@ -8,9 +8,9 @@ import { User } from "../models/user.model";
 //@route POST /api/users/register
 //@access public
 export const registerUser = expressAsyncHandler(async (req, res) => {
-  const { email, password, first_name, last_name, nickname } = req.body;
-  console.log({ email, password, first_name, last_name, nickname });
-  if (!email || !password || !first_name || !last_name || !nickname) {
+  const { email, password, username } = req.body;
+  console.log({ email, password, username });
+  if (!email || !password || !username) {
     res.status(400);
     throw new Error("All fields are mandatory!");
   }
@@ -23,31 +23,35 @@ export const registerUser = expressAsyncHandler(async (req, res) => {
   const user = await User.create({
     email,
     password,
-    first_name,
-    last_name,
-    nickname,
+    username,
   });
 
-  console.log(`User created ${user}`);
   if (user) {
-    res.status(201).json({ _id: user.id, email: user.email });
+    res
+      .status(201)
+      .json({ _id: user.id, email: user.email, username: user.username });
   } else {
     res.status(400);
     throw new Error("User data is not valid");
   }
-  res.json({ message: "Register the user" });
 });
 
 //@desc Login user
 //@route POST /api/users/login
 //@access public
 export const loginUser = expressAsyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
+  const { emailOrUsername, password } = req.body;
+  if (!emailOrUsername || !password) {
     res.status(400);
     throw new Error("All fields are mandatory!");
   }
-  const user = await User.findOne({ email });
+  const userWithEmail = await User.findOne({ email: emailOrUsername });
+  const userWithUsername = await User.findOne({ username: emailOrUsername });
+  const user = userWithEmail ?? userWithUsername;
+  if (!user) {
+    res.status(400);
+    throw new Error("Invalid credentials.");
+  }
   //compare password with hashedpassword
   const isPasswordMatch = await bcrypt.compare(
     password,
@@ -69,7 +73,7 @@ export const loginUser = expressAsyncHandler(async (req, res) => {
     res.status(200).json({ accessToken });
   } else {
     res.status(401);
-    throw new Error("Email or password is not valid");
+    throw new Error("Invalid credentials.");
   }
 });
 

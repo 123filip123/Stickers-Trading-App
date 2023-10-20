@@ -11,14 +11,29 @@ export interface ICard {
 
 const cardSchema = new mongoose.Schema(
   {
-    cardNumber: {
-      type: Number,
-      reqired: true,
-    },
-    collectionId: {
+    collection_id: {
       type: Types.ObjectId,
       ref: "CardCollection",
       required: true,
+    },
+    user_id: {
+      type: Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    card_number: {
+      type: Number,
+      reqired: true,
+    },
+    owned: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    duplicates: {
+      type: Number,
+      required: true,
+      default: 0,
     },
   },
   {
@@ -26,6 +41,6 @@ const cardSchema = new mongoose.Schema(
   }
 );
 
-cardSchema.index({ cardNumber: 1, collectionId: 1 }, { unique: true });
+cardSchema.index({ card_number: 1, collection_id: 1 }, { unique: true });
 
 export const Card = mongoose.model("Card", cardSchema);
