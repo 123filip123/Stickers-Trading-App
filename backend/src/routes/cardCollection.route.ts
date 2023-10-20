@@ -4,17 +4,15 @@ import {
   getCardCollection,
   getCardCollections,
   postCardCollection,
-  putCardCollection,
 } from "../controllers/cardCollection.controller";
+import { validateToken } from "../middleware/validateTokenHandler";
 
 export const cardCollectionRoute = express.Router();
 
-cardCollectionRoute.get("/", getCardCollections);
+cardCollectionRoute.get("/", validateToken, getCardCollections);
 
-cardCollectionRoute.get("/:id", getCardCollection);
+cardCollectionRoute.get("/:id", validateToken, getCardCollection);
 
-cardCollectionRoute.put("/:id", putCardCollection);
+cardCollectionRoute.post("/", validateToken, postCardCollection);
 
-cardCollectionRoute.post("/", postCardCollection);
-
-cardCollectionRoute.delete("/:id", deleteCardCollection);
+cardCollectionRoute.delete("/:id", validateToken, deleteCardCollection);

@@ -1,11 +1,9 @@
 import express from "express";
-import {
-  generateCardsForCollection,
-  getCards,
-} from "../controllers/card.controller";
+import { getCards, putCard } from "../controllers/card.controller";
+import { validateToken } from "../middleware/validateTokenHandler";
 
 export const cardRoute = express.Router();
 
-cardRoute.post("/", generateCardsForCollection);
+cardRoute.get("/", validateToken, getCards);
 
-cardRoute.get("/", getCards);
+cardRoute.put("/:id", validateToken, putCard);

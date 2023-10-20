@@ -26,21 +26,10 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
-    first_name: {
+    username: {
       type: String,
       required: true,
-    },
-    last_name: {
-      type: String,
-      required: true,
-    },
-    nickname: {
-      type: String,
-      required: true,
-    },
-    isEmailVerified: {
-      type: Boolean,
-      default: false,
+      unique: true,
     },
   },
   { timestamps: true }
@@ -63,6 +52,11 @@ userSchema.methods.isPasswordMatch = async function (password: string) {
 
 userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
   const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
+  return !!user;
+};
+
+userSchema.statics.isUsernameTaken = async function (username, excludeUserId) {
+  const user = await this.findOne({ username, _id: { $ne: excludeUserId } });
   return !!user;
 };
 

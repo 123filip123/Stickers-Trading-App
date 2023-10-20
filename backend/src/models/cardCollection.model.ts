@@ -1,25 +1,18 @@
 import mongoose from "mongoose";
 
-export interface ICardCollection {
-  id: string;
-  name: string;
-  number_of_cards: number;
-  image?: string;
-}
-
 const cardCollectionSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       reqired: [true, "Please enter a collection name"],
     },
+    user_id: {
+      type: String,
+      required: true,
+    },
     number_of_cards: {
       type: Number,
       required: [true, "Please enter the number of cards"],
-    },
-    image: {
-      type: String,
-      required: false,
     },
   },
   {
