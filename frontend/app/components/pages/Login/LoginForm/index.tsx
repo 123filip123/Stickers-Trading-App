@@ -94,6 +94,8 @@ export const LoginForm = () => {
                 onChangeText={handleChange("email")}
                 onBlur={handleBlur("email")}
                 width="100%"
+                autoCapitalize="none"
+                keyboardType="email-address"
               />
               {errors.email && touched.email && (
                 <Text color={colors.red}>{errors.email}</Text>
@@ -111,6 +113,7 @@ export const LoginForm = () => {
                 onChangeText={handleChange("password")}
                 onBlur={handleBlur("password")}
                 width="100%"
+                autoCapitalize="none"
                 secureTextEntry
               />
               {errors.password && touched.password && (

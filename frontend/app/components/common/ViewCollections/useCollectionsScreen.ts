@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { ICardCollection } from "../../models/CardCollection";
-import { axiosApi } from "../../network/Auth/config/config";
-import { Endpoints } from "../../network/endpoints";
+import { ICardCollection } from "../../../models/CardCollection";
+import { axiosApi } from "../../../network/Auth/config/config";
+import { Endpoints } from "../../../network/endpoints";
 
-type TUseCollectionsScreenReturn = [ICardCollection[]];
+type TUseViewCollectionsReturn = [ICardCollection[]];
 
-export const useCollectionsScreen = () => {
+export const useViewCollections = () => {
   const [collections, setCollections] = useState<ICardCollection[]>([]);
   useEffect(() => {
     getMyCollections();

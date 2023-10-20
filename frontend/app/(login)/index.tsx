@@ -5,6 +5,7 @@ import {
   Platform,
   StyleSheet,
   TouchableWithoutFeedback,
+  Image,
 } from "react-native";
 import { BORDER_RADIUS } from "../globalConstants";
 import { LoginForm } from "../components/pages/Login/LoginForm";
@@ -25,6 +26,10 @@ const Login = () => {
         enabled
       >
         <View style={styles.container}>
+          <Image
+            source={require("../../assets/images/logo.png")}
+            style={styles.logo}
+          />
           <Tabs value={selectedTab} flexDirection="column" width="100%">
             <Tabs.List width="100%">
               <Tabs.Tab
@@ -76,7 +81,11 @@ export const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS,
     flex: 1,
   },
-  tabs: {},
+  logo: {
+    height: 100,
+    width: 100,
+    marginBottom: 50,
+  },
   singleTab: {
     width: "50%",
   },

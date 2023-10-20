@@ -60,7 +60,8 @@ export const useDownloadCardsIconHook = (
             Toast.show({
               type: "success",
               text1: "Success",
-              text2: "Your file is going to be downloaded soon!",
+              text2:
+                "Your file is going to be downloaded soon! Check your files!",
             });
           })
           .catch((e) => console.log(e));

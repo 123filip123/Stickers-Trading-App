@@ -119,6 +119,8 @@ export const SignupForm = ({ redirectToLogin }: ISignupFormProps) => {
                 onChangeText={handleChange("email")}
                 onBlur={handleBlur("email")}
                 width="100%"
+                autoCapitalize="none"
+                keyboardType="email-address"
               />
               {errors.email && touched.email && (
                 <Text color={colors.red}>{errors.email}</Text>
@@ -137,6 +139,7 @@ export const SignupForm = ({ redirectToLogin }: ISignupFormProps) => {
                 onBlur={handleBlur("password")}
                 width="100%"
                 secureTextEntry
+                autoCapitalize="none"
               />
               {errors.password && touched.password && (
                 <Text color={colors.red}>{errors.password}</Text>
@@ -155,6 +158,7 @@ export const SignupForm = ({ redirectToLogin }: ISignupFormProps) => {
                 onBlur={handleBlur("rePassword")}
                 width="100%"
                 secureTextEntry
+                autoCapitalize="none"
               />
               {errors.rePassword && touched.rePassword && (
                 <Text color={colors.red}>{errors.rePassword}</Text>
