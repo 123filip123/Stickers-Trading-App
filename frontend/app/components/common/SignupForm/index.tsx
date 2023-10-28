@@ -2,13 +2,13 @@ import { Button, Input, Spinner, Text, View } from "tamagui";
 import { Logs } from "expo";
 import { StyleSheet } from "react-native";
 import { Formik } from "formik";
-import { BORDER_RADIUS, colors } from "../../globalConstants";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useState } from "react";
-import { axiosApi } from "../../network/Auth/config/config";
-import { Endpoints } from "../../network/endpoints";
 import * as yup from "yup";
 import Toast from "react-native-toast-message";
+import { BORDER_RADIUS, colors } from "../../../globalConstants";
+import { axiosApi } from "../../../network/Auth/config/config";
+import { Endpoints } from "../../../network/endpoints";
 
 interface ISignupFormProps {
   redirectToLogin: () => void;
@@ -17,38 +17,37 @@ interface ISignupFormProps {
 interface IFormValues {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
-  nickname: string;
+  username: string;
 }
 
 const initialValues = {
   email: "",
   password: "",
   rePassword: "",
-  firstName: "",
-  lastName: "",
-  nickname: "",
+  username: "",
 };
 
 const validationSchema = yup.object().shape({
   email: yup
     .string()
-    .required("Email is required")
-    .email("Invalid email format"),
-  password: yup.string().required("Password is required"),
-  firstName: yup
+    .required("Е-пошта е потребна")
+    .email("Погрешен формат на е-пошта"),
+  password: yup
     .string()
-    .min(2, "First name must be at least 2 characters")
-    .required("First name is required"),
-  lastName: yup
+    .required("Лозинка е потребна")
+    .min(8, "Лозинката мора да биде барен 8 карактери долга")
+    .matches(
+      /^(?=.*[a-zA-Z])(?=.*\d)/,
+      "Лозинката мора да има барем една буква и бројка"
+    ),
+  rePassword: yup
     .string()
-    .min(2, "Last name must be at least 2 characters")
-    .required("Last name is required"),
-  nickname: yup
+    .required("Потврди лозинка е потребно")
+    .oneOf([yup.ref("password")], "Лозинките мора да се исти"),
+  username: yup
     .string()
-    .min(3, "Nickname must be at least 3 characters")
-    .required("Nickname is required"),
+    .min(3, "Корисничкото име мора да биде барем 3 карактери долго")
+    .required("Корисничко име е потребно"),
 });
 
 export const SignupForm = ({ redirectToLogin }: ISignupFormProps) => {
@@ -59,9 +58,7 @@ export const SignupForm = ({ redirectToLogin }: ISignupFormProps) => {
     setIsSubmitting(true);
     const params = {
       email: values.email,
-      first_name: values.firstName,
-      last_name: values.lastName,
-      nickname: values.nickname,
+      username: values.username,
       password: values.password,
     };
     try {
@@ -74,7 +71,7 @@ export const SignupForm = ({ redirectToLogin }: ISignupFormProps) => {
       Toast.show({
         type: "success",
         text1: "Success",
-        text2: "Sign up successful!",
+        text2: "Успешна регистрација",
       });
     } catch (e: any) {
       Toast.show({
@@ -110,11 +107,28 @@ export const SignupForm = ({ redirectToLogin }: ISignupFormProps) => {
         >
           <View style={styles.inputWrapper}>
             <View width="10%">
+              <Icon name="smile-o" size={30} style={styles.icon} />
+            </View>
+            <View width="90%">
+              <Input
+                placeholder="Корисничко име"
+                value={values.username}
+                onChangeText={handleChange("username")}
+                onBlur={handleBlur("username")}
+                width="100%"
+              />
+              {errors.username && touched.username && (
+                <Text color={colors.red}>{errors.username}</Text>
+              )}
+            </View>
+          </View>
+          <View style={styles.inputWrapper}>
+            <View width="10%">
               <Icon name="user" size={30} style={styles.icon} />
             </View>
             <View width="90%">
               <Input
-                placeholder="Email"
+                placeholder="Е-пошта"
                 value={values.email}
                 onChangeText={handleChange("email")}
                 onBlur={handleBlur("email")}
@@ -133,7 +147,7 @@ export const SignupForm = ({ redirectToLogin }: ISignupFormProps) => {
             </View>
             <View width="90%">
               <Input
-                placeholder="Password"
+                placeholder="Лозинка"
                 value={values.password}
                 onChangeText={handleChange("password")}
                 onBlur={handleBlur("password")}
@@ -152,7 +166,7 @@ export const SignupForm = ({ redirectToLogin }: ISignupFormProps) => {
             </View>
             <View width="90%">
               <Input
-                placeholder="Re-Password"
+                placeholder="Потврди лозинка"
                 value={values.rePassword}
                 onChangeText={handleChange("rePassword")}
                 onBlur={handleBlur("rePassword")}
@@ -165,66 +179,17 @@ export const SignupForm = ({ redirectToLogin }: ISignupFormProps) => {
               )}
             </View>
           </View>
-          <View style={styles.inputWrapper}>
-            <View width="10%">
-              <Icon name="font" size={30} style={styles.icon} />
-            </View>
-            <View width="90%">
-              <Input
-                placeholder="First Name"
-                value={values.firstName}
-                onChangeText={handleChange("firstName")}
-                onBlur={handleBlur("firstName")}
-                width="100%"
-              />
-              {errors.firstName && touched.firstName && (
-                <Text color={colors.red}>{errors.firstName}</Text>
-              )}
-            </View>
-          </View>
-          <View style={styles.inputWrapper}>
-            <View width="10%">
-              <Icon name="bold" size={30} style={styles.icon} />
-            </View>
-            <View width="90%">
-              <Input
-                placeholder="Last Name"
-                value={values.lastName}
-                onChangeText={handleChange("lastName")}
-                onBlur={handleBlur("lastName")}
-                width="100%"
-              />
-              {errors.lastName && touched.lastName && (
-                <Text color={colors.red}>{errors.lastName}</Text>
-              )}
-            </View>
-          </View>
-          <View style={styles.inputWrapper}>
-            <View width="10%">
-              <Icon name="smile-o" size={30} style={styles.icon} />
-            </View>
-            <View width="90%">
-              <Input
-                placeholder="Nickname"
-                value={values.nickname}
-                onChangeText={handleChange("nickname")}
-                onBlur={handleBlur("nickname")}
-                width="100%"
-              />
-              {errors.nickname && touched.nickname && (
-                <Text color={colors.red}>{errors.nickname}</Text>
-              )}
-            </View>
-          </View>
+
           <Button
             size="$5"
             onPress={() => handleSubmit()}
-            icon={isSubmitting ? () => <Spinner /> : undefined}
+            icon={isSubmitting ? () => <Spinner color="white" /> : undefined}
             backgroundColor={colors.blue}
             fontSize="$7"
             marginTop={20}
+            color="white"
           >
-            SIGN UP
+            Регистрирај се
           </Button>
         </View>
       )}

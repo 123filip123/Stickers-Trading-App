@@ -5,6 +5,7 @@ import { CollectionItem } from "../CollectionItem";
 import { View } from "tamagui";
 import { BORDER_RADIUS } from "../../../globalConstants";
 import { FlatList } from "react-native";
+import { EmptyCollectionItem } from "../EmptyCollectionItem";
 
 export const ViewCollections = ({ navigation }: any) => {
   Logs.enableExpoCliLogging();
@@ -19,12 +20,7 @@ export const ViewCollections = ({ navigation }: any) => {
       });
 
     return (
-      <CollectionItem
-        imageSrc={item.image}
-        name={item.name}
-        id={item._id}
-        onPress={pressHandler}
-      />
+      <CollectionItem name={item.name} id={item._id} onPress={pressHandler} />
     );
   };
 
@@ -32,15 +28,18 @@ export const ViewCollections = ({ navigation }: any) => {
     <View
       backgroundColor="white"
       borderRadius={BORDER_RADIUS}
-      padding={10}
       height="100%"
+      margin={5}
     >
-      <FlatList
-        data={cardCollections}
-        keyExtractor={(item) => item._id}
-        renderItem={renderCardCollectionItem}
-        numColumns={1}
-      />
+      <EmptyCollectionItem />
+      <View paddingHorizontal={10}>
+        <FlatList
+          data={cardCollections}
+          keyExtractor={(item) => item._id}
+          renderItem={renderCardCollectionItem}
+          numColumns={1}
+        />
+      </View>
     </View>
   );
 };

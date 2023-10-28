@@ -2,40 +2,38 @@ import { Formik } from "formik";
 import React, { useState } from "react";
 import { View, Input, Button, Spinner, Text } from "tamagui";
 import * as SecureStore from "expo-secure-store";
-import { axiosApi } from "../../../../network/Auth/config/config";
-import { Endpoints } from "../../../../network/endpoints";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { BORDER_RADIUS, IError, colors } from "../../../../globalConstants";
 import * as yup from "yup";
 import { Logs } from "expo";
 import Toast from "react-native-toast-message";
-import { useAuth } from "../../../../AuthProvider";
+import { useAuth } from "../../../AuthProvider";
+import { axiosApi } from "../../../network/Auth/config/config";
+import { Endpoints } from "../../../network/endpoints";
+import { BORDER_RADIUS, colors } from "../../../globalConstants";
 
 interface IFormValues {
-  email: string;
+  emailOrUsername: string;
   password: string;
 }
 
 const initialValues = {
-  email: "",
+  emailOrUsername: "",
   password: "",
 };
 
 const validationSchema = yup.object().shape({
-  email: yup
+  emailOrUsername: yup
     .string()
-    .required("Email is required")
-    .email("Invalid email format"),
-  password: yup.string().required("Password is required"),
+    .required("Е-пошта или корисничко име е потребно"),
+  password: yup.string().required("Лозинка е потребна"),
 });
 
-export const LoginForm = () => {
+export const LoginForm = ({ navigation }: any) => {
   Logs.enableExpoCliLogging();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { dispatch } = useAuth();
-  console.log("2");
   const login = async (values: IFormValues) => {
     setIsSubmitting(true);
     try {
@@ -44,12 +42,11 @@ export const LoginForm = () => {
       const accessToken = response.data.accessToken;
       await SecureStore.setItemAsync("BearerToken", accessToken);
 
-      console.log("HERE HERE HRE");
       dispatch({ type: "LOGIN" });
       Toast.show({
         type: "success",
         text1: "Success",
-        text2: "Log in successful!",
+        text2: "Успешна најава",
       });
     } catch (e: any) {
       Toast.show({
@@ -60,6 +57,10 @@ export const LoginForm = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleForgotPasswordPress = () => {
+    navigation.navigate("ForgotPassword");
   };
 
   return (
@@ -89,16 +90,16 @@ export const LoginForm = () => {
             </View>
             <View width="90%">
               <Input
-                placeholder="Email"
-                value={values.email}
-                onChangeText={handleChange("email")}
-                onBlur={handleBlur("email")}
+                placeholder="Е-пошта или корисничко име"
+                value={values.emailOrUsername}
+                onChangeText={handleChange("emailOrUsername")}
+                onBlur={handleBlur("emailOrUsername")}
                 width="100%"
                 autoCapitalize="none"
                 keyboardType="email-address"
               />
-              {errors.email && touched.email && (
-                <Text color={colors.red}>{errors.email}</Text>
+              {errors.emailOrUsername && touched.emailOrUsername && (
+                <Text color={colors.red}>{errors.emailOrUsername}</Text>
               )}
             </View>
           </View>
@@ -108,7 +109,7 @@ export const LoginForm = () => {
             </View>
             <View width="90%">
               <Input
-                placeholder="Password"
+                placeholder="Лозинка"
                 value={values.password}
                 onChangeText={handleChange("password")}
                 onBlur={handleBlur("password")}
@@ -122,17 +123,20 @@ export const LoginForm = () => {
             </View>
           </View>
           <View width="100%" justifyContent="flex-end" flexDirection="row">
-            <Text>Forgot password?</Text>
+            <TouchableOpacity onPress={handleForgotPasswordPress}>
+              <Text>Ја заборави лозинката?</Text>
+            </TouchableOpacity>
           </View>
           <Button
             size="$5"
             onPress={() => handleSubmit()}
-            icon={isSubmitting ? () => <Spinner /> : undefined}
+            icon={isSubmitting ? () => <Spinner color="white" /> : undefined}
             backgroundColor={colors.blue}
             fontSize="$7"
             marginTop={20}
+            color="white"
           >
-            LOGIN
+            Најави се
           </Button>
         </View>
       )}

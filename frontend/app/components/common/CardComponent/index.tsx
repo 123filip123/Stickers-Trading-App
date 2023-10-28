@@ -1,8 +1,8 @@
 import { Card, Text, View } from "tamagui";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { ICard, INotOwnedCard } from "../../../models/Card";
+import { ICard } from "../../../models/Card";
 import { CardModal } from "../CardModal";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Logs } from "expo";
 import { BORDER_RADIUS, colors } from "../../../globalConstants";
 
@@ -12,19 +12,13 @@ interface ICardProps {
   addCard: (newCard: ICard) => void;
 }
 
-export const CardComponent = ({
-  card,
-  collectionName,
-  addCard,
-}: ICardProps) => {
+const CardComponent = ({ card, collectionName, addCard }: ICardProps) => {
   Logs.enableExpoCliLogging();
 
-  const isCardOwned = !!card.owned_id;
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const styles = generateStyles(isCardOwned);
+  const styles = generateStyles(card.owned);
 
   const handlePress = () => {
-    console.log("aaaa");
     setIsModalOpen(true);
   };
 
@@ -48,6 +42,7 @@ export const CardComponent = ({
     </TouchableOpacity>
   );
 };
+export default memo(CardComponent);
 
 const generateStyles = (isOwned?: boolean) =>
   StyleSheet.create({

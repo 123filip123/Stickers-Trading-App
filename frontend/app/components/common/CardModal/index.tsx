@@ -12,6 +12,7 @@ import { TagComponent } from "../TagComponent";
 import { Endpoints } from "../../../network/endpoints";
 import { axiosApi } from "../../../network/Auth/config/config";
 import { SubmitButton } from "../SubmitButton";
+import Toast from "react-native-toast-message";
 
 interface ICardModalProps {
   isVisible: boolean;
@@ -28,7 +29,6 @@ export const CardModal = ({
   addCard,
 }: ICardModalProps) => {
   Logs.enableExpoCliLogging();
-  const isCardOwned = !!card.owned_id;
 
   const [
     duplicatesStateValue,
@@ -38,7 +38,7 @@ export const CardModal = ({
     isFormChanged,
     isSaving,
     setIsSaving,
-  ] = useCardModalFormHook(card, isCardOwned);
+  ] = useCardModalFormHook(card, card.owned);
 
   const styles = generateStyles(isCardOwnedStateValue, isFormChanged);
 
@@ -47,58 +47,33 @@ export const CardModal = ({
   const handleSavePress = async () => {
     setIsSaving(true);
     // If the card is initialy owned, we need to delete if placed as missing, or update for duplicate changes
-    if (isCardOwned) {
-      if (isCardOwnedStateValue) {
-        try {
-          const api = await axiosApi();
-          const body = {
-            duplicates: Number(duplicatesStateValue),
-          };
-          const response = await api.put(
-            Endpoints.updateDuplicates(card.owned_id!),
-            body
-          );
-          addCard(response.data);
-          closeModal();
-        } catch (error) {
-        } finally {
-          setIsSaving(false);
-        }
-      } else {
-        try {
-          const api = await axiosApi();
-          const body = {
-            duplicates: Number(duplicatesStateValue),
-          };
-          const response = await api.delete(
-            Endpoints.deleteCard(card.owned_id!)
-          );
-          addCard(response.data);
-          setDuplicatesStateValue("0");
-          closeModal();
-        } catch (error) {
-        } finally {
-          setIsSaving(false);
-        }
-      }
-    } else {
-      try {
-        const api = await axiosApi();
-        const body = {
-          cardId: card.id,
-          duplicates: Number(duplicatesStateValue),
-        };
-        const response = await api.post(Endpoints.addCard, body);
-        addCard(response.data);
-        closeModal();
-      } catch (error) {
-      } finally {
-        setIsSaving(false);
-      }
+
+    try {
+      const api = await axiosApi();
+      const body = {
+        owned: isCardOwnedStateValue,
+        duplicates: Number(duplicatesStateValue),
+      };
+      const response = await api.put(Endpoints.updateCard(card._id), body);
+      addCard(response.data);
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Успешно зачувана сликичка!",
+      });
+      closeModal();
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Error updating card",
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  const tagComponentText = isSaving ? "SAVING ..." : "NOT SAVED";
+  const tagComponentText = isSaving ? "SAVING ..." : "НЕ Е ЗАЧУВАНО";
 
   return (
     <Modal
@@ -131,8 +106,8 @@ export const CardModal = ({
             <SwitchField
               value={isCardOwnedStateValue}
               onChange={setIsCardOwnedStateValue}
-              leftLabel="Missing"
-              rightLabel="Owned"
+              leftLabel="Недостасува"
+              rightLabel="Сопственост"
             />
             <View
               flexDirection="row"
@@ -141,7 +116,7 @@ export const CardModal = ({
               justifyContent="space-between"
             >
               <View style={styles.duplicatesContainer}>
-                <Label>Duplicates</Label>
+                <Label>Дупликати</Label>
                 <NumberInputField
                   inputSize="$4"
                   value={duplicatesStateValue}
@@ -150,7 +125,7 @@ export const CardModal = ({
                 />
               </View>
               <SubmitButton
-                text="SAVE"
+                text="Зачувај"
                 onPress={handleSavePress}
                 isLoading={isSaving}
                 isDisabled={!isFormChanged}

@@ -22,7 +22,7 @@ export const useViewCollection = (id: string): TUseViewCollectionReturn => {
       const response = await api.get(
         Endpoints.getMyCollectionCards(id as string)
       );
-      setCards(response.data);
+      setCards(response.data.cards);
     } catch (error: any) {
       Toast.show({
         type: "error",
@@ -40,7 +40,7 @@ export const useViewCollection = (id: string): TUseViewCollectionReturn => {
 
   const addCard = (newCard: ICard) => {
     const updatedCards = cards.map((card) => {
-      if (card.id === newCard.id) {
+      if (card._id === newCard._id) {
         // Replace the existing card with the new card
         return newCard;
       }

@@ -7,13 +7,13 @@ import {
   TouchableWithoutFeedback,
   Image,
 } from "react-native";
-import { BORDER_RADIUS } from "../globalConstants";
-import { LoginForm } from "../components/pages/Login/LoginForm";
 import { Logs } from "expo";
-import { SignupForm } from "./SignupForm";
 import { useState } from "react";
+import { SignupForm } from "../../components/common/SignupForm";
+import { LoginForm } from "../../components/common/LoginForm";
+import { BORDER_RADIUS } from "../../globalConstants";
 
-const Login = () => {
+const LoginScreen = ({ navigation }: any) => {
   Logs.enableExpoCliLogging();
   console.log(3);
   const [selectedTab, setSelectedTab] = useState<"login" | "sign-up">("login");
@@ -27,7 +27,7 @@ const Login = () => {
       >
         <View style={styles.container}>
           <Image
-            source={require("../../assets/images/logo.png")}
+            source={require("../../../assets/images/logo.png")}
             style={styles.logo}
           />
           <Tabs value={selectedTab} flexDirection="column" width="100%">
@@ -39,7 +39,7 @@ const Login = () => {
                   setSelectedTab("login");
                 }}
               >
-                <Text>Login</Text>
+                <Text>Најава</Text>
               </Tabs.Tab>
               <Tabs.Tab
                 value="sign-up"
@@ -48,11 +48,11 @@ const Login = () => {
                   setSelectedTab("sign-up");
                 }}
               >
-                <Text>Sign-up</Text>
+                <Text>Регистрација</Text>
               </Tabs.Tab>
             </Tabs.List>
             <Tabs.Content value="login">
-              <LoginForm />
+              <LoginForm navigation={navigation} />
             </Tabs.Content>
             <Tabs.Content value="sign-up">
               <SignupForm
@@ -67,7 +67,7 @@ const Login = () => {
     </TouchableWithoutFeedback>
   );
 };
-export default Login;
+export default LoginScreen;
 
 export const styles = StyleSheet.create({
   container: {

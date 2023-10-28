@@ -1,18 +1,22 @@
 import { Input, ScrollView, View } from "tamagui";
 import { Logs } from "expo";
-import { ActivityIndicator, StyleSheet } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  TextInput,
+} from "react-native";
 import { BORDER_RADIUS, colors } from "../../globalConstants";
 import { ICard } from "../../models/Card";
 import {
   CARDS_TOGGLE_FILTER,
   CardsToggleGroupFilter,
 } from "../../components/common/CardsToggleGroupFilter";
-import { CardComponent } from "../../components/common/CardComponent";
 import { useViewCollection } from "./useViewCollection";
-import { SubmitButton } from "../../components/common/SubmitButton";
-import * as SecureStore from "expo-secure-store";
-import { useAuth } from "../../AuthProvider";
 import { DownloadCardsIcon } from "../../components/common/DownloadCardsIcon";
+import { ViewCollectionDownloadInfo } from "../../components/common/ViewCollectionDownloadInfo";
+import Icon from "react-native-vector-icons/FontAwesome";
+import CardComponent from "../../components/common/CardComponent";
 
 interface IViewCollectionProps {
   route: any;
@@ -21,7 +25,6 @@ interface IViewCollectionProps {
 
 export const ViewCollection = ({ route, navigation }: IViewCollectionProps) => {
   Logs.enableExpoCliLogging();
-  const { dispatch } = useAuth(); // Access the authentication state using useAuth
   const { collectionName, collectionId, numberOfCards } = route.params;
 
   navigation.setOptions({
@@ -62,14 +65,14 @@ export const ViewCollection = ({ route, navigation }: IViewCollectionProps) => {
   const shouldRenderCard = (card: ICard) => {
     switch (cardsToggleFilter) {
       case CARDS_TOGGLE_FILTER.OWNED: {
-        if (!!card.owned_id) {
+        if (card.owned) {
           return (
             searchValue === "" || String(card.card_number).includes(searchValue)
           );
         } else return false;
       }
       case CARDS_TOGGLE_FILTER.MISSING: {
-        if (!card.owned_id) {
+        if (!card.owned) {
           return (
             searchValue === "" || String(card.card_number).includes(searchValue)
           );
@@ -93,51 +96,68 @@ export const ViewCollection = ({ route, navigation }: IViewCollectionProps) => {
   const setToggleGroupValue = (value: CARDS_TOGGLE_FILTER) => {
     setCardToggleFilter(value);
   };
-  const handleLogout = async () => {
-    try {
-      await SecureStore.deleteItemAsync("BearerToken");
-      dispatch({ type: "LOGOUT" });
-      console.log("Access token removed");
-    } catch (error) {
-      console.error("Error removing access token:", error);
-    }
-  };
+
+  const cardsToRender = cards.filter((card) => shouldRenderCard(card));
+
+  const renderItem = ({ item }: { item: ICard }) => (
+    <CardComponent
+      key={item.card_number}
+      card={item}
+      collectionName={route.params.collectionName}
+      addCard={addCard}
+    />
+  );
 
   return (
-    <View backgroundColor="white" borderRadius={BORDER_RADIUS} padding={5}>
-      <SubmitButton text="Log out" color={colors.red} onPress={handleLogout} />
-      <View width="100%" justifyContent="center" alignItems="center" margin={5}>
-        <CardsToggleGroupFilter
-          value={cardsToggleFilter}
-          setValue={setToggleGroupValue}
-        />
-      </View>
-      <View margin={5}>
-        <Input
-          placeholder="Search"
-          keyboardType="numeric"
-          onChangeText={setSearchValue}
-        />
-      </View>
-      <ScrollView
-        borderRadius={BORDER_RADIUS}
-        contentContainerStyle={{ paddingBottom: 150 }}
-      >
-        <View style={styles.gridContainer}>
-          {cards.map((card) => {
-            if (shouldRenderCard(card)) {
-              return (
-                <CardComponent
-                  key={card.card_number}
-                  card={card}
-                  collectionName={route.params.collectionName}
-                  addCard={addCard}
-                />
-              );
-            }
-          })}
+    <View backgroundColor="white" borderRadius={BORDER_RADIUS} margin={5}>
+      {/* <ViewCollectionDownloadInfo /> */}
+      <View padding={5}>
+        <View
+          width="100%"
+          justifyContent="center"
+          alignItems="center"
+          margin={5}
+        >
+          <CardsToggleGroupFilter
+            value={cardsToggleFilter}
+            setValue={setToggleGroupValue}
+          />
         </View>
-      </ScrollView>
+        <View
+          margin={5}
+          padding={5}
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="space-between"
+          borderRadius={BORDER_RADIUS}
+          backgroundColor={colors.gray}
+        >
+          <View margin={5} marginRight={10}>
+            <Icon name="search" size={20} color="gray" />
+          </View>
+          <TextInput
+            placeholder="Search"
+            keyboardType="numeric"
+            onChangeText={setSearchValue}
+            style={{ flex: 1 }}
+          />
+        </View>
+        <ScrollView
+          borderRadius={BORDER_RADIUS}
+          contentContainerStyle={{ paddingBottom: 200 }}
+        >
+          <View style={styles.gridContainer}>
+            {cardsToRender.map((card) => (
+              <CardComponent
+                key={card.card_number}
+                card={card}
+                collectionName={route.params.collectionName}
+                addCard={addCard}
+              />
+            ))}
+          </View>
+        </ScrollView>
+      </View>
     </View>
   );
 };
@@ -146,13 +166,14 @@ const styles = StyleSheet.create({
   gridContainer: {
     backgroundColor: colors.gray,
     flex: 1,
-    flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "center",
     justifyContent: "space-between",
+    flexDirection: "row",
     borderRadius: BORDER_RADIUS,
     margin: 5,
     padding: 5,
+    // paddingBottom: 200,
   },
   row: {
     flexDirection: "row",

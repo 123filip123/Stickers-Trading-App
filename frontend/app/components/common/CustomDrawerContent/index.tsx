@@ -46,7 +46,7 @@ export const CustomDrawerContent = (props: any) => {
       </DrawerContentScrollView>
       <View style={styles.logoutButtonContainer}>
         <SubmitButton
-          text="Log out"
+          text="Одјави се"
           color={colors.red}
           onPress={handleLogout}
         />
