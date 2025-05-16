@@ -7,5 +7,6 @@ Exactly this problem is solved in this thesis. The mobile app offers sticker col
 
 Used technologies:
  - React Native
+ - Expo
  - Node.js
  - Mongo Atlas
